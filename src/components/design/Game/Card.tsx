@@ -17,11 +17,14 @@ const StyledCard = styled(motion.div)`
   margin: auto;
   box-shadow: 0px 0px 30px 1px rgba(0, 255, 117, 0.30);
 
+  @media (max-width: 1400px){
+    width: 350px;
+    height: 450px;
+  }
   @media (max-width: 768px) {
     width: 350px;
     height: 400px;
   }
-
   @media (max-width: 480px) {
     width: 250px;
     height: 360px;
