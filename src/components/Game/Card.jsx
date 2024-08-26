@@ -6,6 +6,11 @@ import {
   useTransform,
   useAnimation,
 } from "framer-motion";
+import axios from "axios";
+
+
+
+
 
 const Card = () => {
   const [data, setData] = useState([]);
@@ -17,9 +22,15 @@ const Card = () => {
   const [correctOnLeft, setCorrectOnLeft] = useState(false);
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
+  const [username, setUsername] = useState("");
   
   useEffect(() => {
-    fetch("https://2297-189-29-146-118.ngrok-free.app/Question", {
+    const storageUsername = localStorage.getItem("username");
+    setUsername(storageUsername || "");
+  }, []);
+
+  useEffect(() => {
+    fetch("https://1705-189-29-146-118.ngrok-free.app/Question", {
       method: "GET",
       headers: {
         'ngrok-skip-browser-warning': 'true'
@@ -90,12 +101,14 @@ const Card = () => {
       setEndTime(new Date()); 
     }
   };
-
+  let timeString = ``;
   const getTotalTime = () => {
     if (startTime && endTime) {
       const timeDiff = Math.round((endTime - startTime) / 1000);
       const minutes = Math.floor(timeDiff / 60);
       const seconds = timeDiff % 60;
+      timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
       return `${minutes} minuto(s) e ${seconds} segundo(s)`;
     }
     return null;
@@ -104,8 +117,19 @@ const Card = () => {
   if (data.length === 0) {
     return <div>Loading...</div>;
   }
-
+  
   if (endTime) {
+      const sendToBancoDados = async () =>  {
+        try{
+          const response = await axios.get(`https://1705-189-29-146-118.ngrok-free.app/Scores/attScores/user=${username};score=${points};HoraPontucao=${timeString}`, {
+            headers: {
+              'ngrok-skip-browser-warning': 'true'
+            }
+          })
+        }catch (error){
+          console.error(error);
+        }
+        }
     const messagePoint = points < 70 ? "Pode Melhorar." : "Você foi muito bem! Parabéns! ";
     return (
       <FinalScreen>
@@ -143,6 +167,10 @@ const Card = () => {
     </Wrapper>
   );
 };
+
+
+
+
 
 export default Card;
 
