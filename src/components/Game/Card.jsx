@@ -8,10 +8,6 @@ import {
 } from "framer-motion";
 import axios from "axios";
 
-
-
-
-
 const Card = () => {
   const [data, setData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -23,7 +19,7 @@ const Card = () => {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [username, setUsername] = useState("");
-  
+
   useEffect(() => {
     const storageUsername = localStorage.getItem("username");
     setUsername(storageUsername || "");
@@ -43,7 +39,7 @@ const Card = () => {
   useEffect(() => {
     setCorrectOnLeft(Math.random() > 0.5);
     if (currentIndex === 0) {
-      setStartTime(new Date()); 
+      setStartTime(new Date());
     }
   }, [currentIndex]);
 
@@ -98,18 +94,21 @@ const Card = () => {
       animControls.start({ x: 0 });
       motionValue.set(0);
     } else {
-      setEndTime(new Date()); 
+      setEndTime(new Date());
     }
   };
-  let timeString = ``;
+
+  const formatTime = (milliseconds) => {
+    const totalSeconds = Math.round(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${String(seconds).padStart(2, '0')}`;
+  };
+
   const getTotalTime = () => {
     if (startTime && endTime) {
-      const timeDiff = Math.round((endTime - startTime) / 1000);
-      const minutes = Math.floor(timeDiff / 60);
-      const seconds = timeDiff % 60;
-      timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-      return `${minutes} minuto(s) e ${seconds} segundo(s)`;
+      const timeDiff = endTime - startTime;
+      return formatTime(timeDiff);
     }
     return null;
   };
@@ -117,19 +116,22 @@ const Card = () => {
   if (data.length === 0) {
     return <div>Loading...</div>;
   }
-  
+
   if (endTime) {
-      const sendToBancoDados = async () =>  {
-        try{
-          const response = await axios.get(`https://1705-189-29-146-118.ngrok-free.app/Scores/attScores/user=${username};score=${points};HoraPontucao=${timeString}`, {
-            headers: {
-              'ngrok-skip-browser-warning': 'true'
-            }
-          })
-        }catch (error){
-          console.error(error);
-        }
-        }
+    const sendToBancoDados = async () => {
+      try {
+        const formattedTime = getTotalTime();
+        const response = await axios.get(`https://1705-189-29-146-118.ngrok-free.app/Scores/attScores/user=${username};score=${points};HoraPontuacao=${formattedTime}`, {
+          headers: {
+            'ngrok-skip-browser-warning': 'true'
+          }
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    sendToBancoDados();
+
     const messagePoint = points < 70 ? "Pode Melhorar." : "Você foi muito bem! Parabéns! ";
     return (
       <FinalScreen>
@@ -156,21 +158,17 @@ const Card = () => {
       >
         <StyledCardInner>{currentQuestion.text_question}</StyledCardInner>
       </StyledCard>
-      <Feedback show={feedback !== ''}>{feedback}</Feedback>
-      <ExplanationScreen show={showExplanation}>
+      <Feedback show={feedback !== '' ? "true" : undefined}>{feedback}</Feedback>
+      <ExplanationScreen show={showExplanation ? "true" : undefined}>
         <div>
           <h3>{feedback.includes(currentQuestion.options.correta) ? 'Você Acertou!' : 'Você Errou!'}</h3>
           <p>{explanation}</p>
-          <button onClick={handleNext}>Próxima Pergunta</button>
+          <button className="mt-7 border px-4 border-green-400 rounded-xl text-green-400 hover:bg-green-400 hover:text-white transition-colors" onClick={handleNext}>Próxima Pergunta</button>
         </div>
       </ExplanationScreen>
     </Wrapper>
   );
 };
-
-
-
-
 
 export default Card;
 
@@ -257,9 +255,9 @@ const FinalScreen = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-    transform: translate(-50%, -50%);
-width: 600px;
-height: 600px;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
   background-color: #1a1a1a;
   padding: 20px;
   background-color: #333;

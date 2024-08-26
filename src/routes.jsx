@@ -3,6 +3,7 @@ import App from './App';
 import Game from './Game.jsx';
 import Login from './Login.tsx';
 import Register from './Register.tsx';
+import Ranking from './Ranking.tsx';
 
 export default function AppRoutes(){
   return (
@@ -11,6 +12,7 @@ export default function AppRoutes(){
       <Route element={<Login/>} path="/login"  />
       <Route element={<Register/>} path="/register"  />
       <Route element={<Game/>} path="/game"  />
+      <Route element={<Ranking/>} path="/ranking"  />
     </Routes>
   );
 }
