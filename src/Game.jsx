@@ -1,4 +1,4 @@
-import Card from "./components/design/Game/Card";
+import Card from "./components/Game/Card";
 
 export  default function Game(){
     return(

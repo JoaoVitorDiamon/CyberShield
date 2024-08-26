@@ -5,6 +5,7 @@ import { clsx } from 'clsx'
 import { brainwave } from "./assets";
 import React, { useState } from 'react'
 import { Eye, EyeSlash } from "@phosphor-icons/react";
+import axios from "axios";
 
 type PasswordType = 'password' | 'text'
 
@@ -14,16 +15,18 @@ const loginFormValidationSchema = zod.object({
   senha: zod.string().nonempty('Digite a sua senha'),
 })
 
-type NewLoginFormData = zod.infer<typeof loginFormValidationSchema>
+type NewRegisterFormData = zod.infer<typeof loginFormValidationSchema>
 
 
 const Register = () => {
-  
+
+
   const [
     inputPasswordType, 
     setInputPasswordType
   ] = useState<PasswordType>('password')
 
+  
   const handleTogglePasswordType = ( type:PasswordType ) => {
     switch ( type ) {
       case 'password':
@@ -36,9 +39,9 @@ const Register = () => {
     }
   }
 
-  type NewLoginFormData = zod.infer<typeof loginFormValidationSchema>
+  type NewRegisterFormData = zod.infer<typeof loginFormValidationSchema>
 
-  const loginForm = useForm<NewLoginFormData>({
+  const loginForm = useForm<NewRegisterFormData>({
     resolver: zodResolver(loginFormValidationSchema)
   })
 
@@ -46,11 +49,31 @@ const Register = () => {
 
   const { errors } = formState
 
-  const handleLoginSubmit = (data: NewLoginFormData) => {
+  const handleLoginSubmit = (data: NewRegisterFormData) => {
     console.log(data)
     reset()
   }
+  const headers = {};
 
+if (process.env.NODE_ENV === 'development') {
+  headers['ngrok-skip-browser-warning'] = 'true';
+}
+
+const handleRegisterSubmit = async (data:NewRegisterFormData) => {
+  try {
+    const url = `https://2ee7-189-29-146-118.ngrok-free.app/Users/cad/user=${data.username}&email=${data.email}&password=${data.senha}`;
+    const response = await axios.get(url, {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      },
+    });
+    console.log("Registro bem-sucedido:", response.data);
+    window.location.href = '/login'
+    reset();
+  } catch (error) {
+    console.error("Falha na requisição:", error);
+  }
+}
   return (
     <div className="grid grid-cols-2 h-screen bg-n-8">
       <div>
@@ -65,7 +88,7 @@ const Register = () => {
                 Faca login ou registre-se para comecar a jogar
               </p>
             </header>
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleLoginSubmit)}>
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleRegisterSubmit)} >
               <div className="flex flex-col gap-2">
                 <label
                   className="font-sans  font-semibold text-sm text-n-1"

@@ -1,54 +1,74 @@
 import { useForm } from "react-hook-form";
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as zod from 'zod'
-import { clsx } from 'clsx'
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as zod from "zod";
+import { clsx } from "clsx";
 import { brainwave } from "./assets";
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
+import axios from "axios";
 
-type PasswordType = 'password' | 'text'
+type PasswordType = "password" | "text";
 
 const loginFormValidationSchema = zod.object({
-  email: zod.string().email('Digite um e-mail válido'),
-  senha: zod.string().nonempty('Digite a sua senha')
-})
+  email: zod.string().email("Digite um e-mail válido"),
+  senha: zod.string().nonempty("Digite a sua senha"),
+});
 
-type NewLoginFormData = zod.infer<typeof loginFormValidationSchema>
-
+type NewLoginFormData = zod.infer<typeof loginFormValidationSchema>;
 
 const Login = () => {
-  
-  const [
-    inputPasswordType, 
-    setInputPasswordType
-  ] = useState<PasswordType>('password')
 
-  const handleTogglePasswordType = ( type:PasswordType ) => {
-    switch ( type ) {
-      case 'password':
-        setInputPasswordType('text')
-        return
-      case 'text':
+  const [inputPasswordType, setInputPasswordType] =
+    useState<PasswordType>("password");
+
+  const handleTogglePasswordType = (type: PasswordType) => {
+    switch (type) {
+      case "password":
+        setInputPasswordType("text");
+        return;
+      case "text":
       default:
-        setInputPasswordType('password')
-        return
+        setInputPasswordType("password");
+        return;
     }
-  }
+  };
 
-  type NewLoginFormData = zod.infer<typeof loginFormValidationSchema>
+
+
+
+  type NewLoginFormData = zod.infer<typeof loginFormValidationSchema>;
 
   const loginForm = useForm<NewLoginFormData>({
-    resolver: zodResolver(loginFormValidationSchema)
-  })
+    resolver: zodResolver(loginFormValidationSchema),
+  });
 
-  const { register, handleSubmit, formState, reset } = loginForm
+  const { register, handleSubmit, formState, reset } = loginForm;
 
-  const { errors } = formState
+  const { errors } = formState;
 
-  const handleLoginSubmit = (data: NewLoginFormData) => {
-    console.log(data)
-    reset()
-  }
+  const handleLoginSubmit = async (data: NewLoginFormData) => {
+    try {
+      const url = `https://2ee7-189-29-146-118.ngrok-free.app/Users/login/email=${data.email}&&password=${data.senha}`;
+      const response = await axios.get(url, {
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        },
+      });
+      if(response.data == 'Email ou senha incorretos'){
+        reset();
+      }else{
+        const {token, username} = response.data;
+        localStorage.setItem('sessionToken', token)
+        localStorage.setItem('username', username)
+              window.location.href = '/'
+      }
+      reset();
+    } catch (error) {
+      console.error("Falha na requisição:", error);
+    }
+    reset();
+  };
+
 
   return (
     <div className="grid grid-cols-2 h-screen bg-n-8">
@@ -64,7 +84,10 @@ const Login = () => {
                 Faca login ou registre-se para comecar a jogar
               </p>
             </header>
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleLoginSubmit)}>
+            <form
+              className="flex flex-col gap-4"
+              onSubmit={handleSubmit(handleLoginSubmit)}
+            >
               <div className="flex flex-col gap-2">
                 <label
                   className="font-sans  font-semibold text-sm text-n-1"
@@ -73,17 +96,24 @@ const Login = () => {
                   E-mail
                 </label>
                 <input
-                  className={clsx("px-4 py-3 bg-white text-sm text-gray-800 leading-5 border border-gray-200 rounded placeholder:text-black outline-none focus:border-purple-900",{ 'border-red': errors.senha,
-                    'focus:border-red-500' : errors.email,
-                  })}
+                  className={clsx(
+                    "px-4 py-3 bg-white text-sm text-gray-800 leading-5 border border-gray-200 rounded placeholder:text-black outline-none focus:border-purple-900",
+                    {
+                      "border-red": errors.senha,
+                      "focus:border-red-500": errors.email,
+                    }
+                  )}
                   type="text"
                   id="email"
                   placeholder="Digite seu e-mail"
-                  {...register('email')}
+                  {...register("email")}
                 />
-                 { errors.email  && (
-                  <span className="text-red-500 text-sm"> {errors.email?.message} </span>)
-                }
+                {errors.email && (
+                  <span className="text-red-500 text-sm">
+                    {" "}
+                    {errors.email?.message}{" "}
+                  </span>
+                )}
               </div>
               <div className="flex  flex-col gap-2 relative">
                 <label
@@ -99,23 +129,31 @@ const Login = () => {
                   </a>
                 </label>
                 <input
-                  className={clsx("px-4 py-3 bg-white text-sm text-gray-800 leading-5 border border-gray-200 rounded placeholder:text-black outline-none focus:border-purple-900",  { 'border-red': errors.email,
-                    'focus:border-red-500' : errors.senha,})}
-                  type= {inputPasswordType}
+                  className={clsx(
+                    "px-4 py-3 bg-white text-sm text-gray-800 leading-5 border border-gray-200 rounded placeholder:text-black outline-none focus:border-purple-900",
+                    {
+                      "border-red": errors.email,
+                      "focus:border-red-500": errors.senha,
+                    }
+                  )}
+                  type={inputPasswordType}
                   id="senha"
                   placeholder="Digite sua senha"
-                  {...register('senha')}
+                  {...register("senha")}
                 />
                 <button
                   className="absolute right-4 top-11 text-gray-400"
-                  type='button'
+                  type="button"
                   onClick={() => handleTogglePasswordType(inputPasswordType)}
                 >
-                  { inputPasswordType === 'password' ? <EyeSlash /> : <Eye /> }
+                  {inputPasswordType === "password" ? <EyeSlash /> : <Eye />}
                 </button>
-                { errors.senha  && (
-                  <span className="text-red-500 text-sm"> {errors.senha?.message} </span>)
-                }
+                {errors.senha && (
+                  <span className="text-red-500 text-sm">
+                    {" "}
+                    {errors.senha?.message}{" "}
+                  </span>
+                )}
               </div>
               <footer className="flex flex-col gap-8 ">
                 <button className="bg-purple-950 text-white font-sans font-bold py-4   rounded  hover:bg-purple-950 hover:ring-2 hover:ring-purple-900 focus:ring-2 focus:ring-purple-900">
