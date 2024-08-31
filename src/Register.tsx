@@ -45,7 +45,7 @@ const Register = () => {
 
   const handleRegisterSubmit = async (data: NewRegisterFormData) => {
     try {
-      const url = `https://2ee7-189-29-146-118.ngrok-free.app/Users/cad/user=${data.username}&email=${data.email}&password=${data.senha}`;
+      const url = `https://9fb7-189-29-146-118.ngrok-free.app/Users/cad/user=${data.username}&email=${data.email}&password=${data.senha}`;
       const response = await axios.get(url, {
         headers: {
           'ngrok-skip-browser-warning': 'true'

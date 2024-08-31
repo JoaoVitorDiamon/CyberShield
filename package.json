@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@heroicons/react": "^2.1.5",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@hookform/resolvers": "^3.9.0",
     "@phosphor-icons/react": "^2.1.7",
     "@react-spring/web": "^9.7.4",
@@ -18,7 +19,6 @@
     "axios": "^1.7.5",
     "clsx": "^2.1.1",
     "framer": "^2.4.1",
-    "framer-motion": "^11.3.30",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.52.2",

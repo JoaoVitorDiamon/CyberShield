@@ -86,3 +86,8 @@
 .-rotate-360 {
   @apply rotate-[-360deg]
 }
+
+.text-neon {
+  color: #CAC6DD; /* Cor neon personalizada */
+  text-shadow: 0 0 5px #CAC6DD, 0 0 10px #CAC6DD, 0 0 20px #CAC6DD, 0 0 40px #CAC6DD;
+}

@@ -26,13 +26,13 @@ const Card = () => {
   }, []);
 
   useEffect(() => {
-    fetch("https://1705-189-29-146-118.ngrok-free.app/Question", {
+    fetch("https://9fb7-189-29-146-118.ngrok-free.app/Question", {
       method: "GET",
       headers: {
-        'ngrok-skip-browser-warning': 'true'
+        "ngrok-skip-browser-warning": "true",
       },
     })
-      .then(response => response.json())
+      .then((response) => response.json())
       .then((data) => setData(data));
   }, []);
 
@@ -71,18 +71,38 @@ const Card = () => {
   };
 
   const handleDragEnd = (event, info) => {
-    const isCorrect = correctOnLeft ? info.offset.x < -100 : info.offset.x > 100;
+    const isCorrect = correctOnLeft
+      ? info.offset.x < -100
+      : info.offset.x > 100;
 
     if (Math.abs(info.offset.x) <= 100) {
       animControls.start({ x: 0 });
     } else {
-      setFeedback(isCorrect ? currentQuestion.options.correta : currentQuestion.options.incorreta);
-      setExplanation(isCorrect ? `Parabéns! Você ganhou ${points + 10} pontos.` : `Explicação: ${currentQuestion.explanation}`);
+      setFeedback(
+        isCorrect
+          ? currentQuestion.options.correta
+          : currentQuestion.options.incorreta
+      );
+      setExplanation(
+        isCorrect
+          ? `Parabéns! Você ganhou ${points + 10} pontos.`
+          : `Explicação: ${currentQuestion.explanation}`
+      );
       setPoints((prev) => (isCorrect ? prev + 10 : prev));
-      animControls.start({ x: isCorrect ? (correctOnLeft ? "-100vw" : "100vw") : (correctOnLeft ? "100vw" : "-100vw") }).then(() => {
-        setShowExplanation(true);
-        motionValue.set(0);
-      });
+      animControls
+        .start({
+          x: isCorrect
+            ? correctOnLeft
+              ? "-100vw"
+              : "100vw"
+            : correctOnLeft
+            ? "100vw"
+            : "-100vw",
+        })
+        .then(() => {
+          setShowExplanation(true);
+          motionValue.set(0);
+        });
     }
   };
 
@@ -113,31 +133,39 @@ const Card = () => {
     return null;
   };
 
+  const PerformancePlayer = async () => {
+    try {
+      const formattedTime = getTotalTime();
+      const response = await axios.get(
+        `https://9fb7-189-29-146-118.ngrok-free.app/Scores/attScores/user=${username};score=${points};horaPontuacao=${formattedTime}`,
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   if (data.length === 0) {
     return <div>Loading...</div>;
   }
 
   if (endTime) {
-    const sendToBancoDados = async () => {
-      try {
-        const formattedTime = getTotalTime();
-        const response = await axios.get(`https://1705-189-29-146-118.ngrok-free.app/Scores/attScores/user=${username};score=${points};HoraPontuacao=${formattedTime}`, {
-          headers: {
-            'ngrok-skip-browser-warning': 'true'
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    sendToBancoDados();
-
-    const messagePoint = points < 70 ? "Pode Melhorar." : "Você foi muito bem! Parabéns! ";
+    const messagePoint =
+      points < 70 ? "Pode Melhorar." : "Você foi muito bem! Parabéns! ";
+    PerformancePlayer();
     return (
       <FinalScreen>
         <h2>{messagePoint}</h2>
         <p>Você fez {points} pontos.</p>
         <p>Tempo total: {getTotalTime()}</p>
+        <button className="mt-7 border px-4 border-green-400 rounded-xl text-green-400 hover:bg-green-400 hover:text-white">
+          <a href="/ranking">Ver o Ranking Geral</a>
+        </button>
       </FinalScreen>
     );
   }
@@ -156,14 +184,26 @@ const Card = () => {
         onDragEnd={handleDragEnd}
         animate={animControls}
       >
-        <StyledCardInner>{currentQuestion.text_question}</StyledCardInner>
+        <StyledCardInner>
+          <QuestionText>{currentQuestion.text_question}</QuestionText>
+          <CardImage src={currentQuestion.imagem} alt="Imagem da Pergunta" />
+        </StyledCardInner>
       </StyledCard>
-      <Feedback show={feedback !== '' ? "true" : undefined}>{feedback}</Feedback>
-      <ExplanationScreen show={showExplanation ? "true" : undefined}>
+      <Feedback show={feedback !== ""}>{feedback}</Feedback>
+      <ExplanationScreen show={showExplanation}>
         <div>
-          <h3>{feedback.includes(currentQuestion.options.correta) ? 'Você Acertou!' : 'Você Errou!'}</h3>
+          <h3>
+            {feedback.includes(currentQuestion.options.correta)
+              ? "Você Acertou!"
+              : "Você Errou!"}
+          </h3>
           <p>{explanation}</p>
-          <button className="mt-7 border px-4 border-green-400 rounded-xl text-green-400 hover:bg-green-400 hover:text-white transition-colors" onClick={handleNext}>Próxima Pergunta</button>
+          <button
+            className="mt-7 border px-4 border-green-400 rounded-xl text-green-400 hover:bg-green-400 hover:text-white"
+            onClick={handleNext}
+          >
+            Próxima Pergunta
+          </button>
         </div>
       </ExplanationScreen>
     </Wrapper>
@@ -181,12 +221,12 @@ const Wrapper = styled.div`
 `;
 
 const StyledCard = styled(motion.div)`
-  width: 590px;
+  width: 570px;
   height: 654px;
   background-image: linear-gradient(163deg, #00ff75 0%, #3700ff 100%);
   border-radius: 20px;
   display: flex;
-  text-align:center;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   transition: all 0.3s;
@@ -199,27 +239,43 @@ const StyledCard = styled(motion.div)`
     height: 450px;
   }
   @media (max-width: 768px) {
-    width: 350px;
-    height: 400px;
+    width: 550px;
+    height: 650px;
   }
   @media (max-width: 480px) {
-    width: 250px;
-    height: 360px;
+    width: 360px;
+    height: 430px;
   }
 `;
 
 const StyledCardInner = styled.div`
   width: 100%;
-  padding-top:20px;
   height: 100%;
   background-color: #1a1a1a;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s;
 
   ${StyledCard}:hover & {
     transform: scale(0.98);
     border-radius: 20px;
   }
+`;
+
+const QuestionText = styled.p`
+  font-size: 1.5rem;
+  color: #fff;
+  text-align: center;
+`;
+
+const CardImage = styled.img`
+  width: 90%;
+  height:60%;
+  margin-top: 50px;
+  border-radius: 15px;
 `;
 
 const Feedback = styled.div`
@@ -256,23 +312,77 @@ const FinalScreen = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 600px;
-  height: 600px;
-  background-color: #1a1a1a;
+  width: 90%;
+  max-width: 600px;
+  background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
   padding: 20px;
-  background-color: #333;
-  border-radius: 10px;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  color: #f0f0f0;
+
+  h2 {
+    font-size: 2rem;
+    color: #e0e0e0;
+    margin-bottom: 20px;
+    animation: fadeIn 0.6s;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin: 10px 0;
+  }
+
+  .points {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4caf50;
+  }
+
+  .time {
+    font-size: 1.2rem;
+    color: #f0f0f0;
+  }
+
+  .btn {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s, transform 0.3s;
+    
+    &:hover {
+      background-color: #45a049;
+      transform: translateY(-2px);
+    }
+  }
 
   @media (max-width: 1400px) {
-    width: 350px;
-    height: 450px;
+    width: 85%;
+    max-width: 500px;
   }
+
   @media (max-width: 768px) {
-    width: 350px;
-    height: 400px;
+    width: 90%;
+    max-width: 400px;
   }
+
   @media (max-width: 480px) {
-    width: 250px;
-    height: 360px;
+    width: 95%;
+    max-width: 300px;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 `;
