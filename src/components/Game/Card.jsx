@@ -137,7 +137,7 @@ const Card = () => {
     try {
       const formattedTime = getTotalTime();
       const response = await axios.get(
-        `https://9fb7-189-29-146-118.ngrok-free.app/Scores/attScores/user=${username};score=${points};horaPontuacao=${formattedTime}`,
+        `https://b8a2-189-29-146-118.ngrok-free.app/Scores/attScores/user=${username};score=${points};horaPontuacao=${formattedTime}`,
         {
           headers: {
             "ngrok-skip-browser-warning": "true",
