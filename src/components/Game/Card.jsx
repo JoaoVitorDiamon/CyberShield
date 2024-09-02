@@ -26,7 +26,7 @@ const Card = () => {
   }, []);
 
   useEffect(() => {
-    fetch("https://9fb7-189-29-146-118.ngrok-free.app/Question", {
+    fetch("https://b8a2-189-29-146-118.ngrok-free.app/Question", {
       method: "GET",
       headers: {
         "ngrok-skip-browser-warning": "true",
