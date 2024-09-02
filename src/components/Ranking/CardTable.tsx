@@ -14,7 +14,7 @@ const CardTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://9fb7-189-29-146-118.ngrok-free.app/Scores", {
+        const response = await fetch("https://b8a2-189-29-146-118.ngrok-free.app/Scores", {
           method: "GET",
           headers: {
             "ngrok-skip-browser-warning": "true",
