@@ -33,7 +33,7 @@ const Login = () => {
 
   const handleLoginSubmit = async (data: NewLoginFormData) => {
     try {
-      const url = `https://9fb7-189-29-146-118.ngrok-free.app/Users/login/email=${data.email}&&password=${data.senha}`;
+      const url = `https://b8a2-189-29-146-118.ngrok-free.app/Users/login/email=${data.email}&&password=${data.senha}`;
       const response = await axios.get(url, {
         headers: {
           'ngrok-skip-browser-warning': 'true'
