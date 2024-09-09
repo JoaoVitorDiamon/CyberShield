@@ -39,8 +39,8 @@ const Hero = () => {
           <p className="body-1 max-w-3xl mx-auto mb-6 text-n-2 lg:mb-8">
           Potencialize sua compreensão sobre proteção online com um site dedicado a ensinar e reforçar conceitos de segurança na internet. Através de desafios interativos e lições práticas, você aprenderá a identificar ameaças cibernéticas, proteger seus dados pessoais e navegar de forma segura. 
           </p>
-          <Button href="/pricing" white>
-            Vamos começar
+          <Button  href="/game" white>
+            Começar o Jogo
           </Button>
         </div>
         <div className="relative max-w-[23rem] mx-auto md:max-w-5xl xl:mb-24">
